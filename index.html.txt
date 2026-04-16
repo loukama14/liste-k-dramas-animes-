@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRACKER K-DRAMAS & ANIMES COLOR</title>
+    <style>
+        :root {
+            --happy: #f1c40f;    /* Jaune */
+            --sad: #3498db;      /* Bleu */
+            --stressed: #e74c3c; /* Rouge */
+            --romantic: #e84393; /* Rose */
+            --brain: #00b894;    /* Vert */
+            --bg: #0f0c29;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg); 
+            margin: 0; padding: 20px; color: #fff; 
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1400px; margin: auto; }
+        h1 { text-align: center; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 30px; }
+
+        /* Stats & Recherche */
+        .stats { 
+            text-align: center; margin-bottom: 25px; background: rgba(255,255,255,0.05); 
+            padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        #count { font-size: 1.5rem; font-weight: bold; color: var(--happy); }
+
+        .search-container { max-width: 500px; margin: 0 auto 30px; }
+        #searchInput { 
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); 
+            background: rgba(0,0,0,0.3); color: #fff; outline: none;
+        }
+
+        /* Onglets */
+        .tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 30px; position: sticky; top: 0; background: var(--bg); padding: 15px 0; z-index: 100; }
+        .tab-btn { 
+            padding: 10px 18px; border: 2px solid transparent; border-radius: 8px; 
+            cursor: pointer; font-weight: bold; background: #1a1a2e; color: #fff; transition: 0.3s;
+        }
+
+        /* Couleurs des boutons par ID */
+        #btn-happy { border-color: var(--happy); color: var(--happy); }
+        #btn-sad { border-color: var(--sad); color: var(--sad); }
+        #btn-stressed { border-color: var(--stressed); color: var(--stressed); }
+        #btn-romantic { border-color: var(--romantic); color: var(--romantic); }
+        #btn-brain { border-color: var(--brain); color: var(--brain); }
+
+        .tab-btn.active { color: #000 !important; }
+        #btn-happy.active { background: var(--happy); }
+        #btn-sad.active { background: var(--sad); }
+        #btn-stressed.active { background: var(--stressed); }
+        #btn-romantic.active { background: var(--romantic); }
+        #btn-brain.active { background: var(--brain); }
+
+        /* Sections */
+        .mood-section { display: none; }
+        .mood-section.active { display: block; }
+
+        .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 900px) { .columns { grid-template-columns: 1fr; } }
+
+        /* Cartes Dynamiques */
+        .card { 
+            background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px; 
+            border-top: 5px solid transparent; transition: 0.3s;
+        }
+        
+        /* Styles spécifiques par mood */
+        #happy .card { border-top-color: var(--happy); }
+        #sad .card { border-top-color: var(--sad); }
+        #stressed .card { border-top-color: var(--stressed); }
+        #romantic .card { border-top-color: var(--romantic); }
+        #brain .card { border-top-color: var(--brain); }
+
+        h2 { margin-top: 0; font-size: 1.1rem; text-align: center; margin-bottom: 20px; text-transform: uppercase; }
+
+        /* Listes */
+        .list-container { max-height: 600px; overflow-y: auto; padding-right: 10px; }
+        
+        /* Personnalisation des scrollbars par catégorie */
+        #happy .list-container::-webkit-scrollbar-thumb { background: var(--happy); }
+        #sad .list-container::-webkit-scrollbar-thumb { background: var(--sad); }
+        #stressed .list-container::-webkit-scrollbar-thumb { background: var(--stressed); }
+        #romantic .list-container::-webkit-scrollbar-thumb { background: var(--romantic); }
+        #brain .list-container::-webkit-scrollbar-thumb { background: var(--brain); }
+
+        .list-container::-webkit-scrollbar { width: 4px; }
+        .list-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+
+        ul { list-style: none; padding: 0; }
+        li { 
+            padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); 
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .item-left { display: flex; align-items: center; gap: 15px; flex-grow: 1; overflow: hidden; }
+        .check-circle { 
+            width: 20px; height: 20px; border: 2px solid #555; border-radius: 50%; 
+            cursor: pointer; flex-shrink: 0; transition: 0.2s;
+        }
+
+        .title-link { color: #eee; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.95rem; }
+        
+        /* États cochés */
+        li.watched .title-link { color: #444; text-decoration: line-through; }
+        li.watched .check-circle { background: #2ecc71; border-color: #2ecc71; }
+
+        /* Score */
+        select { background: #000; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 4px; font-size: 0.8rem; outline: none; }
+        #happy select { color: var(--happy); }
+        #sad select { color: var(--sad); }
+        #stressed select { color: var(--stressed); }
+        #romantic select { color: var(--romantic); }
+        #brain select { color: var(--brain); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>MES 1000 RECOMMANDATIONS</h1>
+    <div class="stats">TOTAL VISIONNÉ : <span id="count">0</span> / 1000</div>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Rechercher dans toute la liste..." onkeyup="searchFunction()">
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn" id="btn-happy" onclick="showMood('happy')">FUN / SHONEN</button>
+        <button class="tab-btn" id="btn-sad" onclick="showMood('sad')">DRAME / EMOTION</button>
+        <button class="tab-btn" id="btn-stressed" onclick="showMood('stressed')">ACTION / SURVIE</button>
+        <button class="tab-btn" id="btn-romantic" onclick="showMood('romantic')">ROMANCE / LIFE</button>
+        <button class="tab-btn" id="btn-brain" onclick="showMood('brain')">MYSTÈRE / PSY</button>
+    </div>
+
+    <div id="main-content"></div>
+</div>
+
+<script>
+    const database = {
+        happy: { title: "Joyeux & Fun", kd: ["Mr. Plankton", "Lovely Runner", "Twinkling Watermelon", "Welcome to Waikiki", "Business Proposal", "Strong Girl Bong Soon", "Mr. Queen", "Weightlifting Fairy Kim Bok-joo", "King the Land", "Extraordinary Attorney Woo", "Gaus Electronics", "Pop Out Boy!", "Sound of Your Heart", "Chief Kim", "Backstreet Rookie", "Racket Boys", "Dali and Cocky Prince", "Shooting Stars", "My ID is Gangnam Beauty", "She Was Pretty", "Clean with Passion for Now", "The Boy Next Door", "Dear.M", "Fight for My Way", "Oh My Ghost", "Beautiful Gong Shim", "Modern Farmer", "Marriage Not Dating", "Dream High", "My Roommate Is a Gumiho", "So I Married An Anti-Fan", "Hometown Cha-Cha-Cha", "Touch Your Heart", "To the Beautiful You", "High Society", "Pasta", "The Package", "Hospital Playlist", "Goryeo-Khitan War", "The Fiery Priest", "Pegasus Market", "Secret Garden", "My Girlfriend is a Gumiho", "Personal Taste", "Playful Kiss", "Boys Over Flowers", "The Heirs", "Coffee Prince", "You're Beautiful", "My Secret Romance", "Cinderella and Four Knights", "Perfume", "Revolutionary Love", "Introverted Boss", "Waikiki 2", "The Beauty Inside", "My Little Baby", "All About My Romance", "Warm and Cozy", "Flower Boy Next Door", "Protect the Boss", "Big", "Lie to Me", "Creating Destiny", "Man of Honor", "The Greatest Love", "Wild Romance", "Bachelor's Vegetable Store", "High Kick!", "Potato Star", "Ugly Alert", "Wonderful Mama", "Pure Pumpkin Flower", "Smile Dong Hae", "Ojoovak Brothers", "King of High School", "Ho-Goo's Love", "Boarding House 24", "Plus Nine Boys", "Sweden Laundry", "Ex-Girlfriend Club", "Falling for Innocence", "One More Happy Ending", "The Lover", "Super Daddy Yeol", "Assembly", "Birth of a Beauty", "Legendary Witch", "Rosy Lovers", "Infinite Power", "Longing for You", "Gourmet", "Misaeng", "Unicorn", "Stock Struck", "Fanletter Please", "Work Later, Drink Now", "Behind Every Star", "Unlock My Boss", "The Forbidden Marriage"], an: ["Frieren", "Komi-san wa, Komyushou", "Spy x Family", "One Piece", "Gintama", "Saiki Kusuo", "Sakamoto Desu ga", "Inazuma Eleven", "Blue Lock", "Haikyuu!!", "Ao Ashi", "Captain Tsubasa", "Initial D", "K-On!", "Nichijou", "Moi Slime", "Konosuba", "Slam Dunk", "Yo-Kai Watch", "Dragon Quest", "Bocchi the Rock!", "Buddy Daddies", "Paripi Koumei", "Aharen-san", "All Out!!", "Grand Blue", "Daily Lives of HS Boys", "Barakamon", "Ouran High School", "Arakawa Under the Bridge", "Silver Spoon", "Lucky Star", "Azumanga Daioh", "Gabriel DropOut", "Miss Kobayashi's Dragon Maid", "Working!!", "Sleepy Princess", "Nozaki-kun", "D-Frag!", "Amagi Brilliant Park", "Baka to Test", "School Rumble", "Hinamatsuri", "Non Non Biyori", "Flying Witch", "My Roommate is a Cat", "Tanaka-kun", "Polar Bear Cafe", "Beelzebub", "Sket Dance", "Poco's Udon World", "Tsuritama", "GTO", "Assassination Classroom", "Mashle", "Zom 100", "Dr. Stone", "Food Wars", "Mob Psycho 100", "Cromartie High", "Detroit Metal City", "Golden Boy", "Great Pretender", "Love is War", "Uzaki-chan", "Nagatoro", "Takagi-san", "My Love Story!!", "Spy x Family S2", "The Masterful Cat", "Campfire Cooking", "Katekyo Hitman Reborn!", "Eyeshield 21", "The Prince of Tennis", "Kuroko's Basketball", "Ace of Diamond", "Yowamushi Pedal", "Free!", "Tsurune", "Sk8 the Infinity", "Bakuman", "Gin no Saji", "Kyou kara Ore wa!!", "Ping Pong", "Chihayafuru", "March Comes in Like a Lion", "Keep Your Hands Off Eizouken!", "A Place Further than Universe", "Little Witch Academia", "Cells at Work!", "How Heavy Are the Dumbbells?", "Sweetness & Lightning", "Isekai Izakaya", "Restaurant to Another World", "Kakushigoto", "Handa-kun", "Play It Cool, Guys", "Wotakoi", "Way of the Househusband", "Saiki K. 2"] },
+        sad: { title: "Drame & Emotion", kd: ["Uncontrollably Fond", "Youth of May", "Move to Heaven", "My Mister", "Twenty-Five Twenty-One", "Moon Lovers", "Our Blues", "Hi Bye, Mama!", "Snowdrop", "Hymn of Death", "Mother", "Thirty-Nine", "Navillera", "Good Bad Mother", "My Liberation Notes", "If You Wish Upon Me", "Just Between Lovers", "18 Again", "Dear My Friends", "Reply 1988", "A Time Called You", "Stairway to Heaven", "Autumn in My Heart", "Winter Sonata", "Marriage Contract", "Chocolate", "Missing You", "Remember", "Queen for 7 Days", "Doom at Your Service", "The Red Sleeve", "49 Days", "Empress Ki", "Chicago Typewriter", "Lost", "Radiant", "The Wind Blows", "Secret Love", "Yumi's Cells S2", "Padam Padam", "Kill Me, Heal Me", "Bridal Mask", "Damo", "I'm Sorry, I Love You", "The King's Daughter", "Iljimae", "The Moon Embracing the Sun", "Gu Family Book", "Warrior Baek Dong-soo", "Dong Yi", "Jang Ok-jung", "Tree With Deep Roots", "Six Flying Dragons", "The Princess' Man", "Gunman in Joseon", "Hwarang", "Lover of the Palace", "Miracle In Cell No 7", "Be With You", "Always", "A Moment to Remember", "The Classic", "Windstruck", "Architecture 101", "A Werewolf Boy", "My Sassy Girl", "Oldboy", "Lady Vengeance", "Sympathy for Mr. Vengeance", "Silenced", "Hope", "Wedding Dress", "Canola", "Harmony", "The Way Home", "Miracle of a Giving Fool", "Hello Ghost", "More Than Blue", "Sad Movie", "Pained", "Daisy", "Maundy Thursday", "A Millionaire's First Love", "Christmas in August", "The Last Blossom", "Way Back Home", "Cart", "Kim Ji-young 1982", "The Preparation", "Commitment", "Missing", "My Annoying Brother", "Stand By Me", "The Starry Night", "Pure Love", "A Diamond in the Rough", "Invitation"], an: ["Anohana", "Plastic Memories", "Your Lie in April", "Violet Evergarden", "Banana Fish", "To Your Eternity", "Clannad After Story", "Angel Beats!", "Rainbow", "Given", "Orange", "Grave of the Fireflies", "I Want to Eat Your Pancreas", "Ride Your Wave", "Wolf Children", "5cm per Second", "Nana", "Tokyo Magnitude 8.0", "Kotaro Lives Alone", "Cyberpunk: Edgerunners", "A Silent Voice", "Into the Forest of Fireflies", "Maquia", "Your Name", "March Comes in Like a Lion", "Terror in Resonance", "Wonder Egg Priority", "Garden of Words", "Air", "Kanon", "White Album 2", "Ef: A Tale of Melodies", "Scum's Wish", "Haibane Renmei", "Madoka Magica", "Land of the Lustrous", "Made in Abyss", "Texhnolyze", "Serial Experiments Lain", "Ergo Proxy", "Death Parade", "Steins;Gate 0", "Devilman Crybaby", "Berserk 1997", "Colorful", "The Wind Rises", "Belladonna of Sadness", "Akame ga Kill!", "Wolf's Rain", "Bokurano", "Now and Then, Here and There", "Casshern Sins", "Hell Girl", "Gunslinger Girl", "Searching for the Full Moon", "Natsume's Book of Friends", "Mushi-Shi", "Girl Who Leapt Through Time", "Weathering With You", "Suzume", "Ponyo", "Spirited Away", "Princess Kaguya", "When Marnie Was There", "Only Yesterday", "Whisper of the Heart", "Tokyo Godfathers", "Millennium Actress", "Paprika", "Perfect Blue", "Metropolis", "Steamboy", "Tekkonkinkreet", "Genius Party", "Mind Game", "Cat Soup", "Short Peace", "Summer Wars", "The Boy and the Beast", "Mirai", "Belle", "Promare", "Redline", "Dead Leaves", "Kite", "Mezzo Forte", "Jin-Roh", "Patlabor", "Ghost in the Shell", "Akira", "Neon Genesis Evangelion", "End of Evangelion", "Rebuild of Evangelion", "RahXephon", "Blue Gender", "Noein", "Key the Metal Idol", "Gilgamesh"] },
+        stressed: { title: "Action & Survie", kd: ["Alice in Borderland", "Squid Game", "Weak Hero Class 1", "Weak Hero Season 2", "Bloodhounds", "All of Us Are Dead", "Vincenzo", "Taxi Driver", "Sweet Home", "Kingdom", "The Glory", "My Name", "A Shop for Killers", "D.P.", "Extracurricular", "Duty After School", "Moving", "The Worst of Evil", "Healer", "The K2", "Stranger", "Signal", "Beyond Evil", "Mouse", "Vagabond", "Voice", "Tunnel", "Iris", "City Hunter", "Mad Dog", "Bad and Crazy", "Lawless Lawyer", "Military Prosecutor", "The Veil", "Big Mouth", "Kill It", "Rugal", "Tell Me What You Saw", "Awaken", "A Korean Odyssey", "The Guest", "Hellbound", "Connect", "Island", "Search", "Search: WWW", "The Swindlers", "The Thieves", "Veteran", "The Man From Nowhere", "I Saw the Devil", "Train to Busan", "Peninsula", "#Alive", "The Wailing", "The Host", "The Chaser", "The Yellow Sea", "Memories of Murder", "Parasite", "Emergency Declaration", "The Outlaws", "The Roundup", "Extreme Job", "The Pirates", "The Admiral", "Assassination", "Steel Rain", "The Berlin File", "New World", "A Bittersweet Life", "A Company Man", "The Spy Gone North", "Ashfall", "Along with the Gods 1", "Along with the Gods 2", "Tidal Wave", "Exit", "The Tunnel", "Pandora", "The Terror Live", "A Hard Day", "Midnight Runners", "Fabricated City", "The Negotiation", "The Divine Fury", "The Witch 1", "Okja", "Space Sweepers", "Carter", "Yaksha", "Kill Boksoon", "Ballerina", "Project Wolf Hunting", "Believer", "Gangster Cop Devil", "Night in Paradise", "Hard Hit", "The Killer"], an: ["Black Lagoon", "Hell’s Paradise", "Deadman Wonderland", "Akame ga Kill!", "Dororo", "Highschool of the Dead", "Elfen Lied", "Attack on Titan", "Berserk", "Claymore", "Soul Eater", "Kill la Kill", "Ao no Exorcist", "Magi", "Arifureta", "Hajime no Ippo", "Gurren Lagann", "Jujutsu Kaisen", "Demon Slayer", "Overlord", "Fate/Zero", "Vinland Saga", "Chainsaw Man", "Air Gear", "Undead Unluck", "Hunter x Hunter", "Naruto Shippuden", "Bleach", "Dragon Ball Z", "Dragon Ball Super", "One Punch Man", "Mob Psycho 100", "Baki", "Kengan Ashura", "Drifters", "Gantz", "Inuyashiki", "Goblin Slayer", "Eminence in Shadow", "Saga of Tanya", "Kingdom", "Golden Kamuy", "Darwin's Game", "Tomodachi Game", "Btooom!", "Shiki", "Another", "Higurashi", "Fire Force", "SAO", "Fate/stay night", "Code Geass", "Blue Lock", "Bungo Stray Dogs", "Hellsing Ultimate", "Dr. Stone", "Seven Deadly Sins", "Black Clover", "My Hero Academia", "Tokyo Ghoul", "Parasyte", "JoJo", "Castlevania", "Megalo Box", "Ashita no Joe", "Tiger & Bunny", "Psycho-Pass", "Kabaneri", "Guilty Crown", "Re:Zero", "Shield Hero", "Slime Isekai", "Mushoku Tensei", "No Game No Life", "Log Horizon", "Mirai Nikki", "Paranoia Agent", "Evangelion", "RahXephon", "Gunbuster", "Diebuster", "Eureka Seven", "Darling in the Franxx", "Gridman", "Dynazenon", "Promare", "Akira", "Ghost in the Shell", "Appleseed", "Ninja Scroll", "Sword of Stranger", "Vampire Hunter D", "Afro Samurai", "Samurai Champloo", "Katanagatari", "Blood-C", "Terra Formars", "Kekkai Sensen", "Dorohedoro", "Edgerunners", "Lycoris Recoil"] },
+        romantic: { title: "Romance & Life", kd: ["Our Beloved Summer", "Love Next Door", "Crash Landing on You", "Nevertheless", "True Beauty", "Alchemy of Souls", "While You Were Sleeping", "My Love from the Star", "Legend of the Blue Sea", "Descendants of the Sun", "Start-Up", "Yumi's Cells", "My Demon", "King the Land", "Queen of Tears", "Marry My Husband", "Touch Your Heart", "Hometown Cha-Cha-Cha", "Strong Woman Bong Soon", "Weightlifting Fairy", "What's Wrong with Secretary Kim", "Coffee Prince", "My Girlfriend is a Gumiho", "I'm Not a Robot", "Because This Is My First Life", "One Spring Night", "Something in the Rain", "Legend of the Blue Sea", "Soundtrack #1", "See You in My 19th Life", "Daily Dose of Sunshine", "Do You Like Brahms?", "When the Camellia Blooms", "My First First Love", "A Business Proposal", "Record of Youth", "Love Alarm", "Suspicious Partner", "Pinocchio", "Healer", "W: Two Worlds", "Doctor Stranger", "While You Were Sleeping", "Uncontrollably Fond", "The Heirs", "Boys Over Flowers", "Dream High", "Princess Hours", "Full House"], an: ["Yuri!!! on Ice", "Maid Sama!", "Toradora!", "Kimi ni Todoke", "Horimiya", "Kaguya-sama", "Fruits Basket", "Your Name", "Silent Voice", "Violet Evergarden", "Blue Spring Ride", "My Dress-Up Darling", "Komi-san", "Angel Next Door", "Tomo-chan", "Sign of Affection", "Golden Time", "My Little Monster", "Apothecary Diaries", "Spice and Wolf", "Ancient Magus Bride", "Insomniacs After School", "Yamada-kun Lv999", "Nisekoi", "Oregairu", "Clannad", "Nana", "Ao Haru Ride", "Snow White", "Say I Love You", "Kamisama Kiss", "Ouran High School", "Scum's Wish", "Domestic Girlfriend", "Rent-a-Girlfriend", "Quintessential Quintuplets", "The Dangers in My Heart", "Rascal Does Not Dream", "Plastic Memories", "Orange", "Tsuki ga Kirei", "Your Lie in April", "Lovely Complex", "Wolf Girl", "Special A", "Relife", "Peach Girl", "Hana Yori Dango", "Itazura na Kiss"] },
+        brain: { title: "Mystère & Psy", kd: ["Flower of Evil", "Signal", "Stranger", "Beyond Evil", "Mouse", "Strangers from Hell", "The Glory", "Squid Game", "Reborn Rich", "Big Mouth", "Through Darkness", "The Devil Judge", "Law School", "Doctor Prisoner", "Watcher", "Tunnel", "The Guest", "Juvenile Justice", "Defendant", "Missing: Other Side", "Trap", "Reset", "Anna", "Mask Girl", "Death's Game", "Kill Me Heal Me", "Psychopath Diary", "The King of Pigs", "Vigilante", "A Killer Paradox", "Bitch X Rich", "Pyramid Game", "Night Has Come", "Duty After School", "Connect", "Hellbound", "Shadow Detective", "Memorist", "He is Psychometric", "Hello Monster", "God's Quiz", "Black", "Tell Me What You Saw", "Blind", "Graceful Family", "Sky Castle", "Penthouse", "Misty", "The World of Married", "Mine"], an: ["Death Note", "Monster", "Erased", "Psycho-Pass", "Promised Neverland", "Steins;Gate", "Pluto", "Perfect Blue", "Code Geass", "Danganronpa", "Paranoia Agent", "Darker Than Black", "Baccano!", "Durarara!!", "Mononoke", "Zankyou no Terror", "ID: INVADED", "Paprika", "Evangelion", "Ergo Proxy", "Lain", "Ghost in the Shell", "Moriarty the Patriot", "Classroom of the Elite", "Kakegurui", "Another", "Higurashi", "Shiki", "Heavenly Delusion", "Hell's Paradise", "Dark Gathering", "Link Click", "Terror in Resonance", "The Perfect Insider", "Beautiful Bones", "Occultic;Nine", "Un-Go", "Ghost Hound", "Death Parade", "No Game No Life", "Kaiji", "One Outs", "Akagi", "Kakegurui Twin", "Tomodachi Game", "Darwin's Game", "Btooom!", "Future Diary", "Deadman Wonderland", "Terror in Resonance"] }
+    };
+
+    function generateContent() {
+        const container = document.getElementById('main-content');
+        const scoreOptions = Array.from({length: 41}, (_, i) => (i / 2).toFixed(1));
+
+        for (let key in database) {
+            const mood = database[key];
+            const section = document.createElement('div');
+            section.id = key; section.className = 'mood-section';
+            
+            section.innerHTML = `
+                <div class="columns">
+                    <div class="card">
+                        <h2>🇰🇷 K-DRAMAS</h2>
+                        <div class="list-container"><ul id="list-kd-${key}"></ul></div>
+                    </div>
+                    <div class="card">
+                        <h2>🇯🇵 ANIMES</h2>
+                        <div class="list-container"><ul id="list-an-${key}"></ul></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(section);
+
+            const fill = (ulId, list, type) => {
+                const ul = document.getElementById(ulId);
+                list.forEach(t => {
+                    const li = document.createElement('li');
+                    const url = type === 'kd' ? `https://mydramalist.com/search?q=${encodeURIComponent(t)}` : `https://myanimelist.net/anime.php?q=${encodeURIComponent(t)}`;
+                    li.innerHTML = `
+                        <div class="item-left">
+                            <div class="check-circle" onclick="toggleItem(this.parentElement.parentElement)"></div>
+                            <a href="${url}" target="_blank" class="title-link">${t}</a>
+                        </div>
+                        <select onchange="saveScore('${t}', this.value)">
+                            <option value="">-</option>
+                            ${scoreOptions.map(s => `<option value="${s}">${s}</option>`).join('')}
+                        </select>
+                    `;
+                    ul.appendChild(li);
+                });
+            };
+            fill(`list-kd-${key}`, mood.kd, 'kd');
+            fill(`list-an-${key}`, mood.an, 'an');
+        }
+    }
+
+    function showMood(id) {
+        document.querySelectorAll('.mood-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.getElementById('btn-' + id).classList.add('active');
+    }
+
+    function toggleItem(li) {
+        li.classList.toggle('watched');
+        updateCounter();
+        saveProgress();
+    }
+
+    function updateCounter() {
+        document.getElementById('count').innerText = document.querySelectorAll('li.watched').length;
+    }
+
+    function saveScore(title, score) {
+        let sc = JSON.parse(localStorage.getItem('scores_v3') || "{}");
+        sc[title] = score;
+        localStorage.setItem('scores_v3', JSON.stringify(sc));
+    }
+
+    function saveProgress() {
+        const idx = [];
+        document.querySelectorAll('li').forEach((li, i) => { if(li.classList.contains('watched')) idx.push(i); });
+        localStorage.setItem('progress_v3', JSON.stringify(idx));
+    }
+
+    function load() {
+        const savedIdx = localStorage.getItem('progress_v3');
+        const all = document.querySelectorAll('li');
+        if(savedIdx) JSON.parse(savedIdx).forEach(i => { if(all[i]) all[i].classList.add('watched'); });
+        
+        let sc = JSON.parse(localStorage.getItem('scores_v3') || "{}");
+        all.forEach(li => {
+            const t = li.querySelector('.title-link').innerText.trim();
+            if(sc[t]) li.querySelector('select').value = sc[t];
+        });
+        updateCounter();
+    }
+
+    function searchFunction() {
+        const q = document.getElementById('searchInput').value.toUpperCase();
+        const items = document.querySelectorAll('li');
+        const sections = document.querySelectorAll('.mood-section');
+        if(q !== "") {
+            sections.forEach(s => s.style.display = "block");
+            items.forEach(li => {
+                const title = li.querySelector('.title-link').innerText.toUpperCase();
+                li.style.display = title.includes(q) ? "flex" : "none";
+            });
+        } else {
+            sections.forEach(s => s.style.display = "none");
+            document.querySelector('.mood-section.active').style.display = "block";
+            items.forEach(li => li.style.display = "flex");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        generateContent();
+        showMood('happy');
+        load();
+    });
+</script>
+
+</body>
+</html>
